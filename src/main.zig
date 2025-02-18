@@ -1,4 +1,5 @@
 const std = @import("std");
+const builtin = @import("builtin");
 
 const Entry = struct {
     name: []const u8,
@@ -9,17 +10,20 @@ const Entry = struct {
     }
 };
 
+var debug_allocator: std.heap.DebugAllocator(.{}) = .init;
+
 pub fn main() !void {
-    // TODO: use areana allocator
+    const allocator, const is_debug = gpa: {
+        break :gpa switch (builtin.mode) {
+            .Debug, .ReleaseSafe => .{ debug_allocator.allocator(), true },
+            .ReleaseFast, .ReleaseSmall => .{ std.heap.smp_allocator, false },
+        };
+    };
+    defer if (is_debug) {
+        _ = debug_allocator.deinit();
+    };
 
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    const allocator = gpa.allocator();
-    defer {
-        const deinit_status = gpa.deinit();
-        if (deinit_status == .leak) std.testing.expect(false) catch @panic("TEST FAIL");
-    }
-
-    // Get note path
+    // // Get note path
     const notes_path: []u8 = blk: {
         const args = try std.process.argsAlloc(allocator);
         defer std.process.argsFree(allocator, args);
@@ -183,15 +187,13 @@ pub fn main() !void {
     defer json.deinit();
     var write_stream = std.json.writeStream(json.writer(), .{});
 
-    try write_stream.beginArray();
+    try write_stream.beginObject();
     for (notes.keys(), notes.values()) |key, value| {
-        try write_stream.beginObject();
         try write_stream.objectField(key);
         try write_stream.write(value);
-        try write_stream.endObject();
     }
-    try write_stream.endArray();
+    try write_stream.endObject();
 
     // print json
-    _ = try std.io.getStdIn().writer().print("{s}\n", .{json.items});
+    _ = try std.io.getStdOut().writer().print("{s}\n", .{json.items});
 }
