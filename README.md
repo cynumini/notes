@@ -13,10 +13,10 @@ Install [zig](https://ziglang.org/download) 0.14.0-dev.3298+6fe1993d8 or later.
 ```bash
 git clone https://github.com/cynumini/notes
 cd notes
-zig build -
-zig build -Doptimize=ReleaseFast -p ~/.local # that means it put bin file in ~/.local/bin/notes
+zig build -Doptimize=ReleaseFast -p ~/.local # this means it will put the bin file in ~/.local/bin
 ```
 
+> [!WARNING]
 > This program has only been tested on Linux. It won't work on Windows, and probably not on macOS either.
 
 ## Commands
@@ -40,9 +40,9 @@ It will return all your notes in the ~/notes folder in this format:
 }
 ```
 
-In this example, my-note-1.md has YAML frontmatter with title, and my-note-2.md and my-note-3.md don't. If there are notes with the same title, the program returns the one with the shortest path. To check if there are duplicates use the `duplicate` command.
+In this example, `my-note-1.md` has YAML frontmatter with title, and `my-note-2.md` and `my-note-3.md` don't. If there are notes with the same title, the program returns the one with the shortest path. To check if there are duplicates use the `duplicate` command.
 
-My note 4 on the other hand is not a file, but a link to a non-existent file in my-note-1.md.
+`My note 4` on the other hand is not a file, but a link to a non-existent file in `my-note-1.md`.
 
 ### duplicate
 
@@ -58,7 +58,7 @@ This gives this result:
 Duplicate: my-note-1.md - subfolder/my-note-5.md
 ```
 
-In this example my my-note-1 and my-note-5 have the same title in YAML frontmatter.
+In this example my `my-note-1` and `my-note-5` have the same title in YAML frontmatter.
 
 ### rename
 
@@ -68,4 +68,4 @@ Rename the note title and all links in other files.
 notes rename ~/notes "my-note-2" "My note 2"
 ```
 
-In this example. Since my-note-2.md doesn't have YAML frontmatter, it will insert it with the new title "My note 2" and after that, if there are other notes with links on "my-note-2", they will be renamed to "My note 2".
+In this example, since `my-note-2.md` doesn't have YAML frontmatter, it will insert it with the new title `My note 2` and after that, if there are other notes with links on `my-note-2`, they will be renamed to `My note 2`.
